@@ -24,8 +24,7 @@ public class EmployeeService {
             employeeRepository.save(employee);
             return employeeId;
         } catch (Exception e) {
-            // Handle any exceptions here
-            e.printStackTrace(); // or log the exception
+            e.printStackTrace();
             throw new RuntimeException("Failed to add employee");
         }
     }
@@ -34,19 +33,11 @@ public class EmployeeService {
         try {
             return employeeRepository.findAll();
         } catch (Exception e) {
-            e.printStackTrace(); // or log the exception
+            e.printStackTrace();
             throw new RuntimeException("Failed to retrieve employees");
         }
     }
 
-    public Page<Employee> getAllEmployeeswithPaging(Pageable pageable) {
-        try {
-            return employeeRepository.findAll(pageable);
-        } catch (Exception e) {
-            e.printStackTrace(); // or log the exception
-            throw new RuntimeException("Failed to retrieve employees");
-        }
-    }
 
     public boolean deleteEmployeeById(String id) {
         try {
@@ -57,7 +48,7 @@ public class EmployeeService {
                 return false;
             }
         } catch (Exception e) {
-            e.printStackTrace(); // or log the exception
+            e.printStackTrace();
             throw new RuntimeException("Failed to delete employee with ID: " + id);
         }
     }
@@ -78,7 +69,7 @@ public class EmployeeService {
                 return false;
             }
         } catch (Exception e) {
-            e.printStackTrace(); // or log the exception
+            e.printStackTrace();
             throw new RuntimeException("Failed to update employee with ID: " + id);
         }
     }
@@ -87,33 +78,8 @@ public class EmployeeService {
         try {
             return employeeRepository.findById(id);
         } catch (Exception e) {
-            e.printStackTrace(); // or log the exception
+            e.printStackTrace();
             throw new RuntimeException("Failed to retrieve employee with ID: " + id);
-        }
-    }
-    public Employee getNthLevelManager(String employeeId, int level) {
-        try {
-            Optional<Employee> employeeOptional = employeeRepository.findById(employeeId);
-            if (employeeOptional.isPresent()) {
-                Employee employee = employeeOptional.get();
-                return findNthLevelManager(employee, level);
-            } else {
-                return null;
-            }
-        } catch (Exception e) {
-            e.printStackTrace(); // or log the exception
-            throw new RuntimeException("Failed to retrieve the nth level manager");
-        }
-    }
-
-    private Employee findNthLevelManager(Employee employee, int level) {
-        if (level == 0) {
-            return employee; // Base case: reached the nth level
-        } else if (employee.getReportsTo() == null) {
-            return null; // Base case: no more managers to traverse
-        } else {
-            // Recursive call to find the (n-1)th level manager
-            return getNthLevelManager(employee.getReportsTo(), level - 1);
         }
     }
 

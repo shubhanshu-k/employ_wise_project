@@ -10,7 +10,6 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
-// Other imports...
 @Getter
 @Setter
 @Document(collection = "employee_details")
@@ -34,7 +33,6 @@ public class Employee {
     @URL(message = "Invalid URL format")
     private String profileImage;
 
-    // Getters and setters
 }
 
 

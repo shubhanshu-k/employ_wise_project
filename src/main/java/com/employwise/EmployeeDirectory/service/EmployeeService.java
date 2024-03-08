@@ -1,10 +1,9 @@
-package com.employwise.employ_wise_project.Service;
+package com.employwise.EmployeeDirectory.service;
 
-import com.employwise.employ_wise_project.model.Employee;
-import com.employwise.employ_wise_project.repository.EmployeeRepository;
+import com.employwise.EmployeeDirectory.model.Employee;
+import com.employwise.EmployeeDirectory.repository.EmployeeRepository;
+import com.employwise.EmployeeDirectory.dto.EmployeeRequest; // Import the new request payload class
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,8 +16,9 @@ public class EmployeeService {
     @Autowired
     private EmployeeRepository employeeRepository;
 
-    public String addEmployee(Employee employee) {
+    public String addEmployee(EmployeeRequest employeeRequest) {
         try {
+            Employee employee = mapRequestToEmployee(employeeRequest);
             String employeeId = UUID.randomUUID().toString();
             employee.setId(employeeId);
             employeeRepository.save(employee);
@@ -53,11 +53,13 @@ public class EmployeeService {
         }
     }
 
-    public boolean updateEmployeeById(String id, Employee updatedEmployee) {
+    public boolean updateEmployeeById(String id, EmployeeRequest updatedEmployeeRequest) {
         try {
             Optional<Employee> existingEmployeeOptional = employeeRepository.findById(id);
             if (existingEmployeeOptional.isPresent()) {
                 Employee existingEmployee = existingEmployeeOptional.get();
+                Employee updatedEmployee = mapRequestToEmployee(updatedEmployeeRequest);
+                // Update existing employee fields with data from updatedEmployee
                 existingEmployee.setEmployeeName(updatedEmployee.getEmployeeName());
                 existingEmployee.setPhoneNumber(updatedEmployee.getPhoneNumber());
                 existingEmployee.setEmail(updatedEmployee.getEmail());
@@ -82,5 +84,13 @@ public class EmployeeService {
             throw new RuntimeException("Failed to retrieve employee with ID: " + id);
         }
     }
-
+    private Employee mapRequestToEmployee(EmployeeRequest employeeRequest) {
+        Employee employee = new Employee();
+        employee.setEmployeeName(employeeRequest.getEmployeeName());
+        employee.setPhoneNumber(employeeRequest.getPhoneNumber());
+        employee.setEmail(employeeRequest.getEmail());
+        employee.setReportsTo(employeeRequest.getReportsTo());
+        employee.setProfileImage(employeeRequest.getProfileImage());
+        return employee;
+    }
 }

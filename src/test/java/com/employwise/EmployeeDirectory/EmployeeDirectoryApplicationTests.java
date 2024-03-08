@@ -1,10 +1,10 @@
-package com.employwise.employ_wise_project;
+package com.employwise.EmployeeDirectory;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class EmployWiseProjectApplicationTests {
+class EmployeeDirectoryApplicationTests {
 
 	@Test
 	void contextLoads() {

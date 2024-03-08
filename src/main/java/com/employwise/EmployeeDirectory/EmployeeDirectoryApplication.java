@@ -1,15 +1,13 @@
-package com.employwise.employ_wise_project;
+package com.employwise.EmployeeDirectory;
 
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
-import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 
 @SpringBootApplication(exclude = { DataSourceAutoConfiguration.class })
-public class EmployWiseProjectApplication {
+public class EmployeeDirectoryApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(EmployWiseProjectApplication.class, args);
+		SpringApplication.run(EmployeeDirectoryApplication.class, args);
 	}
 }

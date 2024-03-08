@@ -1,7 +1,8 @@
-package com.employwise.employ_wise_project.Controllers;
+package com.employwise.EmployeeDirectory.controllers;
 
-import com.employwise.employ_wise_project.Service.EmployeeService;
-import com.employwise.employ_wise_project.model.Employee;
+import com.employwise.EmployeeDirectory.dto.EmployeeRequest;
+import com.employwise.EmployeeDirectory.service.EmployeeService;
+import com.employwise.EmployeeDirectory.model.Employee;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,9 +18,9 @@ public class EmployeeController {
     private EmployeeService employeeService;
 
     @PostMapping("/employees")
-    public ResponseEntity<String> addEmployee(@RequestBody Employee employee) {
+    public ResponseEntity<String> addEmployee(@RequestBody EmployeeRequest employeeRequest) {
         try {
-            String employeeId = employeeService.addEmployee(employee);
+            String employeeId = employeeService.addEmployee(employeeRequest);
             return new ResponseEntity<>(employeeId, HttpStatus.CREATED);
         } catch (Exception e) {
             e.printStackTrace();
@@ -55,9 +56,9 @@ public class EmployeeController {
     }
 
     @PutMapping("/employees/{id}")
-    public ResponseEntity<Void> updateEmployee(@PathVariable String id, @RequestBody Employee updatedEmployee) {
+    public ResponseEntity<Void> updateEmployee(@PathVariable String id, @RequestBody EmployeeRequest updatedEmployeeRequest) {
         try {
-            boolean success = employeeService.updateEmployeeById(id, updatedEmployee);
+            boolean success = employeeService.updateEmployeeById(id, updatedEmployeeRequest);
             if (success) {
                 return new ResponseEntity<>(HttpStatus.OK);
             } else {

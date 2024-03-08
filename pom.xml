@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.employwise</groupId>
-	<artifactId>employ_wise_project</artifactId>
+	<artifactId>EmployeeDirectory</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>employ_wise_project</name>
 	<description>Employwise project for Spring Internship</description>

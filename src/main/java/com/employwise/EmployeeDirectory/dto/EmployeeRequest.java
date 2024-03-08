@@ -1,10 +1,8 @@
-package com.employwise.employ_wise_project.model;
+package com.employwise.EmployeeDirectory.dto;
+
 
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.validator.constraints.URL;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -12,11 +10,7 @@ import javax.validation.constraints.Pattern;
 
 @Getter
 @Setter
-@Document(collection = "employee_details")
-public class Employee {
-    @Id
-    private String id;
-
+public class EmployeeRequest {
     @NotBlank(message = "Employee name is required")
     private String employeeName;
 
@@ -30,9 +24,6 @@ public class Employee {
 
     private String reportsTo;
 
-    @URL(message = "Invalid URL format")
     private String profileImage;
-
 }
-
 

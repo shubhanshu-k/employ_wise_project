@@ -2,7 +2,7 @@ package com.employwise.EmployeeDirectory.service;
 
 import com.employwise.EmployeeDirectory.model.Employee;
 import com.employwise.EmployeeDirectory.repository.EmployeeRepository;
-import com.employwise.EmployeeDirectory.dto.EmployeeRequest; // Import the new request payload class
+import com.employwise.EmployeeDirectory.dto.EmployeeRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

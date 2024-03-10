@@ -3,13 +3,14 @@ package com.employwise.EmployeeDirectory.service;
 import com.employwise.EmployeeDirectory.model.Employee;
 import com.employwise.EmployeeDirectory.repository.EmployeeRepository;
 import com.employwise.EmployeeDirectory.dto.EmployeeRequest; // Import the new request payload class
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-
+@Slf4j
 @Service
 public class EmployeeService {
 
@@ -21,10 +22,11 @@ public class EmployeeService {
             Employee employee = mapRequestToEmployee(employeeRequest);
             String employeeId = UUID.randomUUID().toString();
             employee.setId(employeeId);
+            log.info("Employee added with ID: {}", employeeId);
             employeeRepository.save(employee);
             return employeeId;
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("failed to add an employee");
             throw new RuntimeException("Failed to add employee");
         }
     }
@@ -33,7 +35,7 @@ public class EmployeeService {
         try {
             return employeeRepository.findAll();
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("failed to fetch employees");
             throw new RuntimeException("Failed to retrieve employees");
         }
     }
@@ -48,7 +50,7 @@ public class EmployeeService {
                 return false;
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("failed to delete an employee");
             throw new RuntimeException("Failed to delete employee with ID: " + id);
         }
     }
@@ -65,13 +67,14 @@ public class EmployeeService {
                 existingEmployee.setEmail(updatedEmployee.getEmail());
                 existingEmployee.setReportsTo(updatedEmployee.getReportsTo());
                 existingEmployee.setProfileImage(updatedEmployee.getProfileImage());
+                log.info("Employee with id :"+ id+" updated successfully");
                 employeeRepository.save(existingEmployee);
                 return true;
             } else {
                 return false;
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("failed to update the details of employee with ID:"+id);
             throw new RuntimeException("Failed to update employee with ID: " + id);
         }
     }
@@ -80,7 +83,7 @@ public class EmployeeService {
         try {
             return employeeRepository.findById(id);
         } catch (Exception e) {
-            e.printStackTrace();
+           log.error("Failed to retrieve employee with ID:"+ id);
             throw new RuntimeException("Failed to retrieve employee with ID: " + id);
         }
     }

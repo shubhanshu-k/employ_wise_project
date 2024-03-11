@@ -96,4 +96,16 @@ public class EmployeeService {
         employee.setProfileImage(employeeRequest.getProfileImage());
         return employee;
     }
+
+    public void addEmployeesFromCSV(List<EmployeeRequest> employeeRequests) {
+        try {
+            for (EmployeeRequest employeeRequest : employeeRequests) {
+                addEmployee(employeeRequest); // Call existing addEmployee method to add each employee
+            }
+            log.info("Employees added from CSV");
+        } catch (Exception e) {
+            log.error("Failed to add employees from CSV", e);
+            throw new RuntimeException("Failed to add employees from CSV", e);
+        }
+    }
 }

@@ -8,7 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,6 +46,30 @@ public class EmployeeController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @PostMapping("/employees/upload")
+    public ResponseEntity<String> uploadEmployeesCSV(@RequestParam("file") MultipartFile file) {
+        if (file.isEmpty()) {
+            return new ResponseEntity<>("Please upload a file", HttpStatus.BAD_REQUEST);
+        }
+
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
+            List<EmployeeRequest> employeeRequests = new ArrayList<>();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] data = line.split(","); // Assuming CSV has comma-separated values
+                // Assuming CSV format is: EmployeeName,PhoneNumber,Email,ReportsTo,ProfileImage
+                EmployeeRequest employeeRequest = new EmployeeRequest(data[0], data[1], data[2], data[3], data[4]);
+                employeeRequests.add(employeeRequest);
+            }
+            employeeService.addEmployeesFromCSV(employeeRequests);
+            return new ResponseEntity<>("File uploaded successfully", HttpStatus.CREATED);
+        } catch (Exception e) {
+            log.error("Failed to upload file", e);
+            return new ResponseEntity<>("Failed to upload file", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 
     @DeleteMapping("/employees/{id}")
     public ResponseEntity<Void> deleteEmployee(@PathVariable String id) {

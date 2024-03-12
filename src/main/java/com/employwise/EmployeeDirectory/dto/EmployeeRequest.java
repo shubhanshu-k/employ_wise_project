@@ -1,38 +1,43 @@
 package com.employwise.EmployeeDirectory.dto;
 
-import lombok.Getter;
-import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.*;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
-@Getter
-@Setter
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
 public class EmployeeRequest {
-    @NotBlank(message = "Employee name is required")
+    @NotBlank(message = "name is required.")
+    @JsonProperty("employeeName")
     private String employeeName;
 
-    @NotBlank(message = "Phone number is required")
-    @Pattern(regexp = "\\d{10}", message = "Invalid phone number")
+    @NotNull(message = "phone_Number is required.")
+    @JsonProperty("phoneNumber")
+    @Pattern(regexp = "\\d{10}", message = "mobile_number is not a mobile number")
     private String phoneNumber;
 
-    @NotBlank(message = "Email is required")
-    @Email(message = "Invalid email format")
+    @NotBlank(message = "email is required.")
+    @Email(regexp = ".+@.+\\..+", message = "email is not a valid email address")
+    @JsonProperty("email")
     private String email;
 
     private String reportsTo;
 
     private String profileImage;
 
-    public EmployeeRequest() {
-    }
 
-    public EmployeeRequest(String employeeName, String phoneNumber, String email, String reportsTo, String profileImage) {
-        this.employeeName = employeeName;
-        this.phoneNumber = phoneNumber;
-        this.email = email;
-        this.reportsTo = reportsTo;
-        this.profileImage = profileImage;
-    }
+//    public EmployeeRequest(String employeeName, String phoneNumber, String email, String reportsTo, String profileImage) {
+//        this.employeeName = employeeName;
+//        this.phoneNumber = phoneNumber;
+//        this.email = email;
+//        this.reportsTo = reportsTo;
+//        this.profileImage = profileImage;
+//    }
 }

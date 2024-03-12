@@ -7,9 +7,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
+import javax.validation.Valid;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -17,14 +18,17 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@Slf4j // Add @Slf4j annotation
+@Slf4j
+@Validated
+// Add @Slf4j annotation
+
 public class EmployeeController {
 
     @Autowired
     private EmployeeService employeeService;
 
     @PostMapping("/employees")
-    public ResponseEntity<String> addEmployee(@RequestBody EmployeeRequest employeeRequest) {
+    public ResponseEntity<String> addEmployee( @Valid @RequestBody EmployeeRequest employeeRequest) {
         try {
             String employeeId = employeeService.addEmployee(employeeRequest);
             log.info("Employee added with ID: {}", employeeId);
@@ -54,12 +58,35 @@ public class EmployeeController {
         }
 
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
+            String headerLine = reader.readLine();
+            String[] headers = headerLine.split(","); // Assuming CSV has comma-separated values for header
+
             List<EmployeeRequest> employeeRequests = new ArrayList<>();
             String line;
             while ((line = reader.readLine()) != null) {
-                String[] data = line.split(","); // Assuming CSV has comma-separated values
-                // Assuming CSV format is: EmployeeName,PhoneNumber,Email,ReportsTo,ProfileImage
-                EmployeeRequest employeeRequest = new EmployeeRequest(data[0], data[1], data[2], data[3], data[4]);
+                String[] data = line.split(","); // Assuming CSV has comma-separated values for data
+
+                EmployeeRequest employeeRequest = new EmployeeRequest();
+                for (int i = 0; i < headers.length; i++) {
+                    switch (headers[i].toLowerCase()) {
+                        case "employeename":
+                            employeeRequest.setEmployeeName(data[i]);
+                            break;
+                        case "phonenumber":
+                            employeeRequest.setPhoneNumber(data[i]);
+                            break;
+                        case "email":
+                            employeeRequest.setEmail(data[i]);
+                            break;
+                        case "reportsto":
+                            employeeRequest.setReportsTo(data[i]);
+                            break;
+                        case "profileimage":
+                            employeeRequest.setProfileImage(data[i]);
+                            break;
+                        // Add additional cases for other fields if needed
+                    }
+                }
                 employeeRequests.add(employeeRequest);
             }
             employeeService.addEmployeesFromCSV(employeeRequests);
@@ -89,7 +116,7 @@ public class EmployeeController {
     }
 
     @PutMapping("/employees/{id}")
-    public ResponseEntity<Void> updateEmployee(@PathVariable String id, @RequestBody EmployeeRequest updatedEmployeeRequest) {
+    public ResponseEntity<Void> updateEmployee( @Valid @PathVariable String id, @RequestBody EmployeeRequest updatedEmployeeRequest) {
         try {
             boolean success = employeeService.updateEmployeeById(id, updatedEmployeeRequest);
             if (success) {

@@ -3,14 +3,16 @@ package com.employwise.EmployeeDirectory.controllers;
 import com.employwise.EmployeeDirectory.dto.EmployeeRequest;
 import com.employwise.EmployeeDirectory.model.Employee;
 import com.employwise.EmployeeDirectory.service.EmployeeService;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import javax.validation.Valid;
+//import javax.validation.Valid;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -19,20 +21,24 @@ import java.util.Optional;
 
 @RestController
 @Slf4j
-@Validated
-// Add @Slf4j annotation
-
 public class EmployeeController {
 
     @Autowired
     private EmployeeService employeeService;
 
     @PostMapping("/employees")
-    public ResponseEntity<String> addEmployee( @Valid @RequestBody EmployeeRequest employeeRequest) {
+    public ResponseEntity<Object> addEmployee(@Valid @RequestBody EmployeeRequest employeeRequest, BindingResult bindingResult) {
         try {
-            String employeeId = employeeService.addEmployee(employeeRequest);
-            log.info("Employee added with ID: {}", employeeId);
-            return new ResponseEntity<>(employeeId, HttpStatus.CREATED);
+            if(bindingResult.hasErrors()){
+                log.info("There is error in this Validation: {}",  bindingResult.getAllErrors().stream()
+                        .map(obj -> obj.getDefaultMessage())
+                        .toList());
+                return new ResponseEntity<>("Failed to add employee", HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+            return employeeService.addNewEmployee(employeeRequest);
+//            String employeeId = employeeService.addEmployee(employeeRequest);
+//            log.info("Employee added with ID: {}", employeeId);
+//            return new ResponseEntity<>(employeeId, HttpStatus.CREATED);
         } catch (Exception e) {
             log.error("Failed to add employee", e);
             return new ResponseEntity<>("Failed to add employee", HttpStatus.INTERNAL_SERVER_ERROR);

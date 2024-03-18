@@ -3,34 +3,50 @@ package com.employwise.EmployeeDirectory.service;
 import com.employwise.EmployeeDirectory.model.Employee;
 import com.employwise.EmployeeDirectory.repository.EmployeeRepository;
 import com.employwise.EmployeeDirectory.dto.EmployeeRequest;
+import com.employwise.EmployeeDirectory.utils.ResponseHandler;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
+
 @Slf4j
 @Service
-public class EmployeeService {
+public class EmployeeService implements EmployeeServiceImplement {
 
     @Autowired
     private EmployeeRepository employeeRepository;
 
-    public String addEmployee(EmployeeRequest employeeRequest) {
-        try {
-            Employee employee = mapRequestToEmployee(employeeRequest);
-            String employeeId = UUID.randomUUID().toString();
-            employee.setId(employeeId);
-            log.info("Employee added with ID: {}", employeeId);
-            employeeRepository.save(employee);
-            return employeeId;
-        } catch (Exception e) {
-            log.error("failed to add an employee");
-            throw new RuntimeException("Failed to add employee");
-        }
+    @Override
+    public ResponseEntity<Object> addNewEmployee(EmployeeRequest employeeRequest) {
+        ObjectMapper mapper = new ObjectMapper();
+        Employee employee = mapper.convertValue(employeeRequest, Employee.class);
+        Employee saveEmployee = null;
+        saveEmployee = employeeRepository.save(employee);
+        Map<String, Object> successResponse = new HashMap<>();
+        successResponse.put("status", "success");
+        successResponse.put("saveEmployeeData", saveEmployee);
+
+        return ResponseHandler.responseBuilder("SUCCESS", HttpStatus.OK, successResponse);
     }
 
+//    public String addEmployee(EmployeeRequest employeeRequest) {
+//        try {
+//            Employee employee = mapRequestToEmployee(employeeRequest);
+//            String employeeId = UUID.randomUUID().toString();
+//            employee.setId(employeeId);
+//            log.info("Employee added with ID: {}", employeeId);
+//            employeeRepository.save(employee);
+//            return employeeId;
+//        } catch (Exception e) {
+//            log.error("failed to add an employee");
+//            throw new RuntimeException("Failed to add employee");
+//        }
+//    }
+//
     public List<Employee> getAllEmployees() {
         try {
             return employeeRepository.findAll();
@@ -100,7 +116,7 @@ public class EmployeeService {
     public void addEmployeesFromCSV(List<EmployeeRequest> employeeRequests) {
         try {
             for (EmployeeRequest employeeRequest : employeeRequests) {
-                addEmployee(employeeRequest); // Call existing addEmployee method to add each employee
+                addNewEmployee(employeeRequest); // Call existing addEmployee method to add each employee
             }
             log.info("Employees added from CSV");
         } catch (Exception e) {

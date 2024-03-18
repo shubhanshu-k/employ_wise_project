@@ -1,12 +1,15 @@
 package com.employwise.EmployeeDirectory.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import lombok.*;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
+//import javax.validation.constraints.Email;
+//import javax.validation.constraints.NotBlank;
+//import javax.validation.constraints.NotNull;
+//import javax.validation.constraints.Pattern;
 
 @Data
 @Builder
@@ -14,13 +17,14 @@ import javax.validation.constraints.Pattern;
 @AllArgsConstructor
 @ToString
 public class EmployeeRequest {
+
     @NotBlank(message = "name is required.")
     @JsonProperty("employeeName")
     private String employeeName;
 
-    @NotNull(message = "phone_Number is required.")
-    @JsonProperty("phoneNumber")
+    @NotBlank(message = "phone_Number is required.")
     @Pattern(regexp = "\\d{10}", message = "mobile_number is not a mobile number")
+    @JsonProperty("phoneNumber")
     private String phoneNumber;
 
     @NotBlank(message = "email is required.")
@@ -28,16 +32,9 @@ public class EmployeeRequest {
     @JsonProperty("email")
     private String email;
 
+    @JsonProperty("reportsTo")
     private String reportsTo;
 
+    @JsonProperty("profileImage")
     private String profileImage;
-
-
-//    public EmployeeRequest(String employeeName, String phoneNumber, String email, String reportsTo, String profileImage) {
-//        this.employeeName = employeeName;
-//        this.phoneNumber = phoneNumber;
-//        this.email = email;
-//        this.reportsTo = reportsTo;
-//        this.profileImage = profileImage;
-//    }
 }

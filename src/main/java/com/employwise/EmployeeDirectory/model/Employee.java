@@ -1,36 +1,32 @@
 package com.employwise.EmployeeDirectory.model;
 
-import lombok.Getter;
-import lombok.Setter;
-import org.hibernate.validator.constraints.URL;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Pattern;
-
-@Getter
-@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Data
 @Document(collection = "employee_details")
 public class Employee {
     @Id
+    @Field("employee_id")
     private String id;
 
-    @NotBlank(message = "Employee name is required")
+    @Field("employeeName")
     private String employeeName;
-
-    @NotBlank(message = "Phone number is required")
-    @Pattern(regexp = "\\d{10}", message = "Invalid phone number")
+    @Field("phoneNumber")
     private String phoneNumber;
-
-    @NotBlank(message = "Email is required")
-    @Email(message = "Invalid email format")
+    @Field("email")
     private String email;
-
+    @Field("reportsTo")
     private String reportsTo;
-
-    @URL(message = "Invalid URL format")
+    @Field("profileImage")
     private String profileImage;
 
 }

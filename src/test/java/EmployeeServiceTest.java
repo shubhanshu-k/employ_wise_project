@@ -35,7 +35,7 @@ public class EmployeeServiceTest {
         EmployeeRequest employeeRequest = new EmployeeRequest();
         when(employeeRepository.save(any())).thenReturn(new Employee());
 
-        String employeeId = employeeService.addEmployee(employeeRequest);
+        String employeeId = employeeService.addNewEmployee(employeeRequest);
 
         assertNotNull(employeeId);
     }

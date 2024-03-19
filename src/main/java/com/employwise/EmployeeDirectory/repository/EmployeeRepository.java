@@ -35,4 +35,8 @@ public class EmployeeRepository {
     public Optional<Employee> findById(String id) {
         return Optional.ofNullable(mongoTemplate.findOne(query(where("id").is(id)), Employee.class, collectionName));
     }
+
+    public Optional<Employee> findByEmail(String email) {
+        return Optional.ofNullable(mongoTemplate.findOne(query(where("email").is(email)), Employee.class, collectionName));
+    }
 }

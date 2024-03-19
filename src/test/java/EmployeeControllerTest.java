@@ -10,6 +10,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.validation.BindingResult;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,9 +36,9 @@ public class EmployeeControllerTest {
     @Test
     void addEmployee_Success() {
         EmployeeRequest employeeRequest = new EmployeeRequest();
-        when(employeeService.addEmployee(any())).thenReturn("1");
+        when(employeeService.addNewEmployee(any())).thenReturn("1");
 
-        ResponseEntity<String> response = employeeController.addEmployee(employeeRequest);
+        ResponseEntity<String> response = employeeController.addEmployee(employeeRequest, bindingResult);
 
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         assertEquals("1", response.getBody());

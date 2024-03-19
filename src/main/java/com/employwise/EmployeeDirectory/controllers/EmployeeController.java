@@ -84,13 +84,15 @@ public class EmployeeController {
                         case "email":
                             employeeRequest.setEmail(data[i]);
                             break;
+                        case "password":
+                            employeeRequest.setPassword(data[i]);
+                            break;
                         case "reportsto":
                             employeeRequest.setReportsTo(data[i]);
                             break;
                         case "profileimage":
                             employeeRequest.setProfileImage(data[i]);
                             break;
-                        // Add additional cases for other fields if needed
                     }
                 }
                 employeeRequests.add(employeeRequest);

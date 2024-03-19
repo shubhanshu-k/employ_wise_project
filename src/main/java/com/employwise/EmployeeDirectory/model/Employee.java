@@ -20,15 +20,19 @@ public class Employee {
 
     @Field("employeeName")
     private String employeeName;
+
     @Field("phoneNumber")
     private String phoneNumber;
+
     @Field("email")
     private String email;
+
+    @Field("password")
+    private String password;
+
     @Field("reportsTo")
     private String reportsTo;
+
     @Field("profileImage")
     private String profileImage;
-
 }
-
-

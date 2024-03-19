@@ -1,8 +1,8 @@
 package com.employwise.EmployeeDirectory.service;
 
+import com.employwise.EmployeeDirectory.dto.EmployeeRequest;
 import com.employwise.EmployeeDirectory.model.Employee;
 import com.employwise.EmployeeDirectory.repository.EmployeeRepository;
-import com.employwise.EmployeeDirectory.dto.EmployeeRequest;
 import com.employwise.EmployeeDirectory.utils.ResponseHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -11,7 +11,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -24,8 +27,7 @@ public class EmployeeService implements EmployeeServiceImplement {
     public ResponseEntity<Object> addNewEmployee(EmployeeRequest employeeRequest) {
         ObjectMapper mapper = new ObjectMapper();
         Employee employee = mapper.convertValue(employeeRequest, Employee.class);
-        Employee saveEmployee = null;
-        saveEmployee = employeeRepository.save(employee);
+        Employee saveEmployee = employeeRepository.save(employee);
         Map<String, Object> successResponse = new HashMap<>();
         successResponse.put("status", "success");
         successResponse.put("saveEmployeeData", saveEmployee);
@@ -33,20 +35,6 @@ public class EmployeeService implements EmployeeServiceImplement {
         return ResponseHandler.responseBuilder("SUCCESS", HttpStatus.OK, successResponse);
     }
 
-//    public String addEmployee(EmployeeRequest employeeRequest) {
-//        try {
-//            Employee employee = mapRequestToEmployee(employeeRequest);
-//            String employeeId = UUID.randomUUID().toString();
-//            employee.setId(employeeId);
-//            log.info("Employee added with ID: {}", employeeId);
-//            employeeRepository.save(employee);
-//            return employeeId;
-//        } catch (Exception e) {
-//            log.error("failed to add an employee");
-//            throw new RuntimeException("Failed to add employee");
-//        }
-//    }
-//
     public List<Employee> getAllEmployees() {
         try {
             return employeeRepository.findAll();
@@ -55,7 +43,6 @@ public class EmployeeService implements EmployeeServiceImplement {
             throw new RuntimeException("Failed to retrieve employees");
         }
     }
-
 
     public boolean deleteEmployeeById(String id) {
         try {
@@ -81,16 +68,17 @@ public class EmployeeService implements EmployeeServiceImplement {
                 existingEmployee.setEmployeeName(updatedEmployee.getEmployeeName());
                 existingEmployee.setPhoneNumber(updatedEmployee.getPhoneNumber());
                 existingEmployee.setEmail(updatedEmployee.getEmail());
+                existingEmployee.setPassword(updatedEmployee.getPassword()); // Set password field
                 existingEmployee.setReportsTo(updatedEmployee.getReportsTo());
                 existingEmployee.setProfileImage(updatedEmployee.getProfileImage());
-                log.info("Employee with id :"+ id+" updated successfully");
+                log.info("Employee with id :" + id + " updated successfully");
                 employeeRepository.save(existingEmployee);
                 return true;
             } else {
                 return false;
             }
         } catch (Exception e) {
-            log.error("failed to update the details of employee with ID:"+id);
+            log.error("failed to update the details of employee with ID:" + id);
             throw new RuntimeException("Failed to update employee with ID: " + id);
         }
     }
@@ -99,15 +87,17 @@ public class EmployeeService implements EmployeeServiceImplement {
         try {
             return employeeRepository.findById(id);
         } catch (Exception e) {
-           log.error("Failed to retrieve employee with ID:"+ id);
+            log.error("Failed to retrieve employee with ID:" + id);
             throw new RuntimeException("Failed to retrieve employee with ID: " + id);
         }
     }
+
     private Employee mapRequestToEmployee(EmployeeRequest employeeRequest) {
         Employee employee = new Employee();
         employee.setEmployeeName(employeeRequest.getEmployeeName());
         employee.setPhoneNumber(employeeRequest.getPhoneNumber());
         employee.setEmail(employeeRequest.getEmail());
+        employee.setPassword(employeeRequest.getPassword()); // Set password field
         employee.setReportsTo(employeeRequest.getReportsTo());
         employee.setProfileImage(employeeRequest.getProfileImage());
         return employee;
@@ -116,12 +106,21 @@ public class EmployeeService implements EmployeeServiceImplement {
     public void addEmployeesFromCSV(List<EmployeeRequest> employeeRequests) {
         try {
             for (EmployeeRequest employeeRequest : employeeRequests) {
-                addNewEmployee(employeeRequest); // Call existing addEmployee method to add each employee
+                addNewEmployee(employeeRequest);
             }
             log.info("Employees added from CSV");
         } catch (Exception e) {
             log.error("Failed to add employees from CSV", e);
             throw new RuntimeException("Failed to add employees from CSV", e);
+        }
+    }
+
+    public Optional<Employee> getEmployeeByEmail(String email) {
+        try {
+            return employeeRepository.findByEmail(email);
+        } catch (Exception e) {
+            log.error("Failed to retrieve employee with email:" + email);
+            throw new RuntimeException("Failed to retrieve employee with email: " + email);
         }
     }
 }

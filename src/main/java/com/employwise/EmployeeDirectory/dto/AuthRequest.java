@@ -11,18 +11,15 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class LoginRequest {
+public class AuthRequest {
 
     @NotBlank(message = "email is required.")
     @Email(regexp = ".+@.+\\..+", message = "email is not a valid email address")
     @JsonProperty("email")
     private String email;
 
-    @NotBlank(message = "password is required.") // New field for password
-    @JsonProperty("password") // New field for password
-    private String password; // New field for password
+    @NotBlank(message = "OTP is required.")
+    @JsonProperty("otp")
+    private String otp;
 
-//    @NotBlank(message = "OTP is required.")
-//    @JsonProperty("otp")
-//    private String otp;
 }

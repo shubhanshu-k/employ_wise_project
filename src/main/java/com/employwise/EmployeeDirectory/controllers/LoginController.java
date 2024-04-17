@@ -1,11 +1,11 @@
 package com.employwise.EmployeeDirectory.controllers;
 
-
 import com.employwise.EmployeeDirectory.dto.AuthRequest;
 import com.employwise.EmployeeDirectory.dto.LoginRequest;
 import com.employwise.EmployeeDirectory.model.Employee;
 import com.employwise.EmployeeDirectory.service.EmailService;
 import com.employwise.EmployeeDirectory.service.EmployeeService;
+import com.employwise.EmployeeDirectory.service.LoginService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,23 +14,17 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
-import java.util.Random;
 
 @Slf4j
 @RestController
 public class LoginController {
 
     @Autowired
-    private EmailService emailService;
+    private LoginService loginService;
 
     @Autowired
     private EmployeeService employeeService;
-
-    // Map to store email and OTP pair
-    private Map<String, String> emailOTPMap = new HashMap<>();
 
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) {
@@ -42,37 +36,22 @@ public class LoginController {
             }
 
             // Check if email exists in the database
+            // Assuming EmployeeService is used to check email existence
             Optional<Employee> employeeOptional = employeeService.getEmployeeByEmail(loginRequest.getEmail());
             if (employeeOptional.isEmpty()) {
                 log.info("Login failed: Email not registered");
                 return new ResponseEntity<>("Login failed: Email not registered", HttpStatus.UNAUTHORIZED);
             }
-log.info("you are here 1st");
+
             // Generate and send OTP
-            String OTP = generateOTP();
-            log.info("you are here 2nd");
-            log.info(" OTP is :" + OTP);
-            String emailTemp=loginRequest.getEmail();
-            emailService.sendOTP(emailTemp, OTP);
-            log.info("you are here 3rd");
-            // Store the OTP in the map
-            emailOTPMap.put(emailTemp, OTP);
-            log.info("you are here 4th");
+            String OTP = loginService.generateOTP();
+            loginService.sendOTP(loginRequest.getEmail(), OTP);
 
             return new ResponseEntity<>("OTP sent to your email", HttpStatus.OK);
-
         } catch (Exception e) {
             log.error("Failed to process login request", e);
             return new ResponseEntity<>("Failed to process login request", HttpStatus.INTERNAL_SERVER_ERROR);
         }
-    }
-
-    // Method to generate a 6-digit OTP
-    private String generateOTP() {
-        Random random = new Random();
-        int otp = 100000 + random.nextInt(900000);
-
-        return String.valueOf(otp);
     }
 
     @PostMapping("/verify-otp")
@@ -80,11 +59,14 @@ log.info("you are here 1st");
         try {
             String email = authRequest.getEmail();
             String enteredOTP = authRequest.getOtp();
+            Optional<Employee> employeeOptional = employeeService.getEmployeeByEmail(email);
+            if (employeeOptional.isEmpty()) {
+                log.info("Login failed: Email not registered");
+                return new ResponseEntity<>("Login failed: Email not registered", HttpStatus.UNAUTHORIZED);
+            }
 
-            // Check if OTP is correct
-            if (emailOTPMap.containsKey(email) && emailOTPMap.get(email).equals(enteredOTP)) {
-                // Clear the OTP from the map after successful login
-                emailOTPMap.remove(email);
+            // Verify OTP
+            if (loginService.verifyOTP(email, enteredOTP)) {
                 log.info("Login successful");
                 return new ResponseEntity<>("Login successful", HttpStatus.OK);
             } else {

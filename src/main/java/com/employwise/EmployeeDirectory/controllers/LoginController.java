@@ -3,7 +3,6 @@ package com.employwise.EmployeeDirectory.controllers;
 import com.employwise.EmployeeDirectory.dto.AuthRequest;
 import com.employwise.EmployeeDirectory.dto.LoginRequest;
 import com.employwise.EmployeeDirectory.model.Employee;
-import com.employwise.EmployeeDirectory.service.EmailService;
 import com.employwise.EmployeeDirectory.service.EmployeeService;
 import com.employwise.EmployeeDirectory.service.LoginService;
 import lombok.extern.slf4j.Slf4j;
@@ -57,8 +56,13 @@ public class LoginController {
     @PostMapping("/verify-otp")
     public ResponseEntity<String> verifyOTP(@RequestBody AuthRequest authRequest) {
         try {
+
             String email = authRequest.getEmail();
             String enteredOTP = authRequest.getOtp();
+            if(email==null || enteredOTP==null){
+                log.info("Login failed: Both email and OTP are required");
+                return new ResponseEntity<>("Login failed: Both email and OTP are required", HttpStatus.BAD_REQUEST);
+            }
             Optional<Employee> employeeOptional = employeeService.getEmployeeByEmail(email);
             if (employeeOptional.isEmpty()) {
                 log.info("Login failed: Email not registered");

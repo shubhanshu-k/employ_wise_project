@@ -1,5 +1,6 @@
 package com.employwise.EmployeeDirectory.dto;
 
+import com.employwise.EmployeeDirectory.validators.ValidOTP;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -19,6 +20,7 @@ public class AuthRequest {
     private String email;
 
     @NotBlank(message = "OTP is required.")
+    @ValidOTP
     @JsonProperty("otp")
     private String otp;
 

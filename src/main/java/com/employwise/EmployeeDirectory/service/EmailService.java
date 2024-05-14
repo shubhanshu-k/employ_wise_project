@@ -24,4 +24,13 @@ public class EmailService {
         javaMailSender.send(message);
         System.out.println("Mail Sent successfully...");
     }
+    public void sendPassResetLink(String email, String link) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom("csmypvt@gmail.com");
+        message.setTo(email);
+        message.setSubject("Your account has been freezed due to multiple incorrect attempts");
+        message.setText("your account has been freezed reset your password using this link:"+" "+ link);
+        javaMailSender.send(message);
+        System.out.println("Mail Sent successfully...");
+    }
 }

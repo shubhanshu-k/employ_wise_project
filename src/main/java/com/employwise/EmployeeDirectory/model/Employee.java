@@ -35,4 +35,8 @@ public class Employee {
 
     @Field("profileImage")
     private String profileImage;
+
+    @Field("accountStatus")
+    private String accountStatus = "active";
+
 }

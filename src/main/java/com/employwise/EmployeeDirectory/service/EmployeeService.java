@@ -15,9 +15,15 @@ public interface EmployeeService {
 
     boolean updateEmployeeById(String id, EmployeeRequest updatedEmployeeRequest);
 
+    void updateAccountStatus(String email, String status);
+
     Optional<Employee> getEmployeeById(String id);
+
+    String getPasswordByEmail(String email);
 
     void addEmployeesFromCSV(List<EmployeeRequest> employeeRequests);
 
     Optional<Employee> getEmployeeByEmail(String email);
+
+
 }

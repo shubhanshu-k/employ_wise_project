@@ -4,7 +4,6 @@ import com.employwise.EmployeeDirectory.dto.EmployeeRequest;
 import com.employwise.EmployeeDirectory.model.Employee;
 import com.employwise.EmployeeDirectory.repository.EmployeeRepository;
 import com.employwise.EmployeeDirectory.service.EmployeeService;
-import com.employwise.EmployeeDirectory.service.impl.EmployeeServiceImplement;
 import com.employwise.EmployeeDirectory.utils.ResponseHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -84,6 +83,24 @@ public class EmployeeServiceImplement implements EmployeeService {
             throw new RuntimeException("Failed to update employee with ID: " + id);
         }
     }
+    @Override
+    public void updateAccountStatus(String email, String status) {
+        try {
+            Optional<Employee> employeeOptional = employeeRepository.findByEmail(email);
+            if (employeeOptional.isPresent()) {
+                Employee employee = employeeOptional.get();
+                employee.setAccountStatus(status);
+//                employeeRepository.save(employee);
+                employeeRepository.updateAccountStatusByEmail(email,status);
+                log.info("employeedetails"+employee+" with status"+ employee.getAccountStatus());
+            } else {
+                // Handle case when employee is not found
+                log.warn("Employee with email {} not found", email);
+            }
+        } catch (Exception e) {
+            log.error("Failed to update account status for email: {}", email, e);
+        }
+    }
 
     public Optional<Employee> getEmployeeById(String id) {
         try {
@@ -92,6 +109,12 @@ public class EmployeeServiceImplement implements EmployeeService {
             log.error("Failed to retrieve employee with ID:" + id);
             throw new RuntimeException("Failed to retrieve employee with ID: " + id);
         }
+    }
+
+    @Override
+    public String getPasswordByEmail(String email) {
+        Optional<Employee> employeeOptional = getEmployeeByEmail(email);
+        return employeeOptional.map(Employee::getPassword).orElse(null);
     }
 
     private Employee mapRequestToEmployee(EmployeeRequest employeeRequest) {
@@ -125,4 +148,6 @@ public class EmployeeServiceImplement implements EmployeeService {
             throw new RuntimeException("Failed to retrieve employee with email: " + email);
         }
     }
+
+
 }
